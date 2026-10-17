@@ -1,0 +1,142 @@
+{
+  "version": "2026-10-17.1",
+  "territory": "Georgia Power (residential)",
+  "notes": "Results are 'potentially relevant' only. Each program decides eligibility. Update limits and lastChecked dates whenever a source changes.",
+  "fpl": {
+    "year": 2026,
+    "base": 15960,
+    "perAdditionalPerson": 5680,
+    "source": "https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines",
+    "lastChecked": "2026-10-17",
+    "needsVerification": "perAdditionalPerson is an estimate; confirm against the published 2026 HHS guideline."
+  },
+  "liheapIncomeLimits": {
+    "description": "60% of Georgia state median income, by household size",
+    "bySize": [34549, 45168, 55795, 66423, 77051, 87678, 89671, 91664],
+    "source": "https://benefitsusa.org/blog/georgia-liheap-income-limits-2026",
+    "lastChecked": "2026-10-17",
+    "needsVerification": "Third-party source. Sizes 1 and 4 come from the source; others derived with standard SMI ratios. Confirm with Georgia DFCS before the demo."
+  },
+  "programs": [
+    {
+      "id": "gp-iqd",
+      "name": "Georgia Power Income-Qualified Discount",
+      "shortName": "Income-Qualified Discount",
+      "category": "bill-credit",
+      "value": "$33.50/month (about $402/year) off your bill",
+      "annualValueLow": 402,
+      "annualValueHigh": 402,
+      "rule": {
+        "incomeLimit": { "type": "fpl", "percent": 200 },
+        "requiresAnyOf": ["age65", "ssi", "ssdi", "section8"]
+      },
+      "whoQualifies": "Household income at or below 200% of the federal poverty level AND someone is 65+, receives SSI or SSDI, or has a Section 8 voucher.",
+      "howToApply": "Use the online pre-qualifier at georgiapower.com, or call Georgia Power customer service.",
+      "applyUrl": "https://georgiapower.com/residential/billing-and-rate-plans/billing-options/payment-assistance/senior-citizen-discount.html",
+      "checklist": [
+        "Your Georgia Power account number (top of your bill)",
+        "Proof of age (driver's license or state ID), OR your SSI/SSDI award letter, OR your Section 8 voucher",
+        "Proof of household income (Social Security statement, pension statement, or recent pay stubs)"
+      ],
+      "source": "https://georgiapower.com/residential/billing-and-rate-plans/billing-options/payment-assistance/senior-citizen-discount.html",
+      "lastChecked": "2026-10-17"
+    },
+    {
+      "id": "liheap",
+      "name": "LIHEAP (heating, cooling and crisis help)",
+      "shortName": "LIHEAP",
+      "category": "bill-credit",
+      "value": "$400–$810 per season, paid directly to Georgia Power",
+      "annualValueLow": 400,
+      "annualValueHigh": 810,
+      "rule": {
+        "incomeLimit": { "type": "liheap" }
+      },
+      "whoQualifies": "Household income at or below 60% of Georgia's state median income. Funding is first come, first served each season.",
+      "howToApply": "Book an appointment with your county's community action agency. Seniors 65+ and homebound residents often get early access.",
+      "applyUrl": "https://dfcs.georgia.gov/services/low-income-home-energy-assistance-program-liheap",
+      "checklist": [
+        "Photo ID for the person applying",
+        "Social Security cards (or numbers) for everyone in the household",
+        "Proof of income for everyone in the household for the last 30 days",
+        "Your most recent Georgia Power bill",
+        "Your heating bill, if heat comes from a different company"
+      ],
+      "source": "https://www.atlantanewsfirst.com/2025/12/02/applications-open-georgia-winter-heating-assistance-program/",
+      "lastChecked": "2026-10-17"
+    },
+    {
+      "id": "gp-ease",
+      "name": "Georgia Power EASE (free home energy upgrades)",
+      "shortName": "EASE",
+      "category": "home-upgrade",
+      "value": "Free insulation, air sealing and HVAC service, up to $5,000",
+      "annualValueLow": 0,
+      "annualValueHigh": 0,
+      "upgradeValue": 5000,
+      "rule": {
+        "incomeLimit": { "type": "fpl", "percent": 300 }
+      },
+      "renterNote": "Renters need written consent from their landlord.",
+      "whoQualifies": "Household income at or below 300% of the federal poverty level. Renters need landlord consent.",
+      "howToApply": "Apply online, then schedule a free home assessment.",
+      "applyUrl": "https://www.georgiapower.com/ease",
+      "checklist": [
+        "Your Georgia Power account number",
+        "Proof of household income",
+        "If you rent: your landlord's written consent",
+        "A time you can be home for the assessment"
+      ],
+      "source": "https://www.georgiapower.com/ease",
+      "lastChecked": "2026-10-17"
+    },
+    {
+      "id": "wap",
+      "name": "Weatherization Assistance Program",
+      "shortName": "Weatherization",
+      "category": "home-upgrade",
+      "value": "Free upgrades based on a home energy audit",
+      "annualValueLow": 0,
+      "annualValueHigh": 0,
+      "rule": {
+        "incomeLimit": { "type": "fpl", "percent": 200 },
+        "priorityFor": ["age65", "ssdi", "ssi", "children"]
+      },
+      "renterNote": "Renters usually need the landlord's permission.",
+      "whoQualifies": "Household income at or below 200% of the federal poverty level. Priority for seniors, people with disabilities and families with children.",
+      "howToApply": "Contact your local weatherization agency (administered with GEFA).",
+      "applyUrl": "https://gefa.georgia.gov/weatherization-assistance-program",
+      "checklist": [
+        "Photo ID",
+        "Proof of income for everyone in the household",
+        "Recent utility bills (electric and gas)",
+        "Proof you own the home, or your landlord's permission"
+      ],
+      "source": "https://savannahga.gov/4277/Weatherization-Assistance-Program",
+      "lastChecked": "2026-10-17"
+    },
+    {
+      "id": "project-share",
+      "name": "Project SHARE (emergency energy help)",
+      "shortName": "Project SHARE",
+      "category": "crisis",
+      "value": "Varies — $2M+ a year across 40,000+ Georgians",
+      "annualValueLow": 0,
+      "annualValueHigh": 0,
+      "rule": {
+        "requiresAnyOf": ["crisis"],
+        "alwaysCheck": true
+      },
+      "whoQualifies": "Decided case by case for households in crisis, such as a past-due bill or a shutoff notice.",
+      "howToApply": "Visit or call your local Salvation Army office.",
+      "applyUrl": "https://projectshareinfo.com/",
+      "checklist": [
+        "Your past-due bill or shutoff notice",
+        "Photo ID",
+        "Proof of household income"
+      ],
+      "source": "https://projectshareinfo.com/",
+      "lastChecked": "2026-10-17"
+    }
+  ]
+}
