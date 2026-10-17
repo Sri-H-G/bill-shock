@@ -1,0 +1,94 @@
+<!doctype html>
+<!-- Synthetic Georgia Power-style bill for extraction tests. All personal details are fictional.
+     Expected values live in expected.json; keep the two in sync. -->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { margin: 0; background: #fff; font-family: Arial, Helvetica, sans-serif; color: #111; }
+  .page { width: 760px; padding: 28px 32px; box-sizing: border-box; }
+  .top { display: flex; justify-content: space-between; border-bottom: 3px solid #e2231a; padding-bottom: 10px; }
+  .logo { font-size: 26px; font-weight: bold; color: #e2231a; }
+  .muted { color: #555; font-size: 12px; }
+  h2 { font-size: 14px; background: #f1f1f1; padding: 6px 8px; margin: 18px 0 6px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  td { padding: 4px 8px; }
+  td.r { text-align: right; }
+  .total td { border-top: 2px solid #111; font-weight: bold; font-size: 15px; }
+  .box { border: 2px solid #111; padding: 10px 14px; text-align: right; }
+  .box b { font-size: 24px; }
+  .chart { display: flex; align-items: flex-end; gap: 8px; height: 170px; border-bottom: 1px solid #333; padding: 0 6px; }
+  .bar { flex: 1; background: #7a9cc6; position: relative; }
+  .bar.cur { background: #e2231a; }
+  .bar span { position: absolute; top: -16px; left: -6px; right: -6px; text-align: center; font-size: 10px; }
+  .months { display: flex; gap: 8px; padding: 2px 6px; font-size: 10px; }
+  .months div { flex: 1; text-align: center; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top">
+    <div>
+      <div class="logo">GEORGIA POWER</div>
+      <div class="muted">A Southern Company · georgiapower.com · 888-660-5890</div>
+    </div>
+    <div class="box">
+      <div class="muted">Total Amount Due by Aug 4, 2026</div>
+      <b>$194.86</b>
+    </div>
+  </div>
+
+  <table style="margin-top:12px">
+    <tr><td>Customer: JORDAN SAMPLE</td><td class="r">Account Number: 01234-56789</td></tr>
+    <tr><td>Service Address: 123 EXAMPLE ST, DECATUR GA 30030</td><td class="r">Bill Date: Jul 15, 2026</td></tr>
+    <tr><td>Rate: Residential Service (R-30)</td><td class="r">Service Period: Jun 12, 2026 – Jul 13, 2026 (31 days)</td></tr>
+  </table>
+
+  <h2>Account Summary</h2>
+  <table>
+    <tr><td>Previous Bill Amount</td><td class="r">$151.20</td></tr>
+    <tr><td>Payment Received Jun 28 – Thank You</td><td class="r">-$151.20</td></tr>
+    <tr><td>Balance Forward</td><td class="r">$0.00</td></tr>
+    <tr><td>Current Charges</td><td class="r">$194.86</td></tr>
+    <tr class="total"><td>Total Amount Due</td><td class="r">$194.86</td></tr>
+  </table>
+
+  <h2>Meter Reading &amp; Usage</h2>
+  <table>
+    <tr><td>Meter 7745120 · Previous read 48,211 · Present read 49,529</td><td class="r">kWh Used: 1,318</td></tr>
+    <tr><td>Last month's usage</td><td class="r">1,042 kWh</td></tr>
+  </table>
+
+  <h2>Current Charges Detail</h2>
+  <table>
+    <tr><td>Basic Service Charge</td><td class="r">$17.95</td></tr>
+    <tr><td>Energy Charge – Summer (1,318 kWh)</td><td class="r">$133.42</td></tr>
+    <tr><td>Fuel Cost Recovery</td><td class="r">$27.68</td></tr>
+    <tr><td>Environmental Compliance Cost Recovery</td><td class="r">$8.30</td></tr>
+    <tr><td>Franchise Fee</td><td class="r">$3.85</td></tr>
+    <tr><td>Sales Tax</td><td class="r">$3.66</td></tr>
+    <tr class="total"><td>Total Current Charges</td><td class="r">$194.86</td></tr>
+  </table>
+
+  <h2>Your Monthly kWh Usage</h2>
+  <div style="padding-top:18px">
+    <div class="chart" id="chart"></div>
+    <div class="months" id="months"></div>
+  </div>
+</div>
+<script>
+  const data = [["Jul 25",1402],["Aug",1475],["Sep",1210],["Oct",880],["Nov",835],["Dec",1065],["Jan 26",1170],["Feb",1020],["Mar",890],["Apr",845],["May",925],["Jun",1042],["Jul",1318]];
+  const max = 1600;
+  data.forEach(([m, v], i) => {
+    const bar = document.createElement("div");
+    bar.className = "bar" + (i === data.length - 1 ? " cur" : "");
+    bar.style.height = (v / max * 100) + "%";
+    bar.innerHTML = "<span>" + v.toLocaleString() + "</span>";
+    document.getElementById("chart").appendChild(bar);
+    const lab = document.createElement("div");
+    lab.textContent = m;
+    document.getElementById("months").appendChild(lab);
+  });
+</script>
+</body>
+</html>

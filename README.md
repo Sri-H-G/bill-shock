@@ -8,7 +8,7 @@ Snap a photo of a Georgia Power bill → see why it changed → find the assista
 
 | Feature | Plan | Status |
 |---|---|---|
-| Bill scan and plain-language explanation | Free | Working (Claude vision) |
+| Bill scan and plain-language explanation | Free | Working (Claude or OpenAI vision) |
 | Assistance matching (5 programs) | Free | Working (fixed rules) |
 | Checklist and official links | Free | Working |
 | Bill history chart, alerts, forecast, tips | Premium | Simulated (`/premium`) |
@@ -21,15 +21,24 @@ No API key? Click **"Try a sample bill"** to run the whole flow with Denise's (i
 
 ```bash
 npm install
-cp .env.example .env.local   # add ANTHROPIC_API_KEY for real bill scanning
+cp .env.example .env.local   # add ANTHROPIC_API_KEY or OPENAI_API_KEY for real bill scanning
 npm run dev                  # http://localhost:3000
 npm test                     # rules engine tests
+npm run test:extract         # with dev server running + a key: scores bill reading on test bills
 ```
+
+### Choosing the AI provider
+
+Set either key in `.env.local`. If both are set, Anthropic is used; force one with `BILL_AI_PROVIDER=openai` (or `anthropic`). Models default to `claude-opus-5-5` / `gpt-5.5` and can be overridden with `ANTHROPIC_MODEL` / `OPENAI_MODEL`. Both providers fill the same Zod schema, so the rest of the app doesn't care which one ran.
+
+### Testing bill reading
+
+`test/fixtures/` has a synthetic Georgia Power-style bill (`bill.html`) rendered three ways: a clean PNG, a tilted, compressed phone-style JPEG, and a PDF. `npm run test:extract` uploads each through the real `/api/extract` route and checks 29 fields (amounts, dates, kWh, every charge line, 13 months of usage history) plus that no name, address or account number leaks into the output. Target: 95%+. Re-render after editing the HTML with `npm run fixtures`.
 
 ## How it works
 
 ```
-photo/PDF ──► /api/extract ──► Claude (claude-opus-5-5) ──► JSON against a fixed Zod schema
+photo/PDF ──► /api/extract ──► Claude or OpenAI vision ──► JSON against a fixed Zod schema
                                                              │
                      user confirms / edits the numbers ◄─────┘
                                    │
@@ -51,17 +60,18 @@ photo/PDF ──► /api/extract ──► Claude (claude-opus-5-5) ──► JS
 | `src/lib/rules.ts` | Matching engine |
 | `src/lib/bill.ts` | Extraction schema, change explanation, sample bill |
 | `src/lib/tracker.ts` | Premium forecast math (seasonal range) |
-| `src/app/api/extract/route.ts` | Claude vision call |
+| `src/lib/extract.ts` | Bill extraction: shared prompt, Anthropic + OpenAI providers |
+| `src/app/api/extract/route.ts` | Upload endpoint (validates file, picks provider) |
 | `src/app/api/interest/route.ts` | Fake-door click counter |
 
 ## Before the demo
 
 - [ ] Confirm LIHEAP income limits with Georgia DFCS (current numbers are from a third-party source; sizes 2–3 and 5–8 are derived).
 - [ ] Confirm the 2026 FPL per-additional-person amount (`fpl.perAdditionalPerson` in `programs.json`).
-- [ ] Test extraction on real bills (target: 95%+ of fields correct after user confirmation).
+- [ ] Run `npm run test:extract` with the demo key, then try 3–5 real bills (target: 95%+ of fields correct after user confirmation).
 
 ## Deploy
 
-Vercel: import the repo, set `ANTHROPIC_API_KEY`, deploy. No database needed for the demo.
+Vercel: import the repo, set `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`, deploy. No database needed for the demo.
 
 Results are "potentially relevant" programs only. Each program decides eligibility. Not affiliated with Georgia Power.

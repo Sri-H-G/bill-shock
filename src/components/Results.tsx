@@ -82,6 +82,9 @@ function ProgramCard({ match, defaultOpen }: { match: Match; defaultOpen: boolea
           >
             Go to the official site ↗
           </a>
+          <p className="-mt-2 break-all text-center text-xs text-ink-3 select-all">
+            {program.applyUrl.replace(/^https:\/\/(www\.)?/, "")}
+          </p>
           <p className="text-xs text-ink-3">
             Who qualifies: {program.whoQualifies}{" "}
             <a href={program.source} target="_blank" rel="noopener noreferrer" className="underline">

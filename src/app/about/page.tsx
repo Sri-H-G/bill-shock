@@ -28,10 +28,10 @@ const PLANS = [
 ];
 
 const SOURCES = [
-  ["Georgia PSC Data Center Fact Sheet", "https://psc.ga.gov/site/downloads/datacenterfactsheet.pdf"],
+  ["Georgia PSC 2025 Annual Report (data center load growth)", "https://psc.ga.gov/site/downloads/annual_reports/2025_GAPSC_Annual_Report.pdf"],
   ["AJC: PSC approves $16B data center power plant expansion", "https://www.ajc.com/business/2025/12/georgia-power-gets-pscs-go-ahead-on-16b-data-center-power-plant-expansion/"],
   ["AJC: Analysts warn bills will rise after the freeze", "https://www.ajc.com/business/2025/11/analysts-warn-georgia-power-bills-will-rise-if-psc-approves-data-center-buildout/"],
-  ["ACEEE: Energy burden in Atlanta", "https://www.aceee.org/sites/default/files/pdfs/aceee-01_energy_burden_-_atlanta.pdf"],
+  ["ACEEE: Energy burden in Atlanta", "https://www.aceee.org/wp-content/uploads/2026/05/a-e/aceee-01_energy_burden_-_atlanta.pdf"],
   ["NLIHC Advocates' Guide 2026: LIHEAP", "https://nlihc.org/sites/default/files/AG-2026/CH5/7_The_Low_Income_Home_Energy_Assistance_Program_LIHEAP_Chapter_5.pdf"],
 ];
 

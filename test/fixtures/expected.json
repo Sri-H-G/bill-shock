@@ -1,0 +1,26 @@
+{
+  "isElectricBill": true,
+  "ratePlan": "R-30",
+  "billingStart": "2026-06-12",
+  "billingEnd": "2026-07-13",
+  "kwhUsed": 1318,
+  "currentCharges": 194.86,
+  "totalDue": 194.86,
+  "pastDue": 0,
+  "previousKwh": 1042,
+  "previousCharges": 151.2,
+  "charges": [
+    ["Basic Service", 17.95],
+    ["Energy", 133.42],
+    ["Fuel", 27.68],
+    ["Environmental", 8.3],
+    ["Franchise", 3.85],
+    ["Sales Tax", 3.66]
+  ],
+  "usageHistory": [
+    ["2025-07", 1402], ["2025-08", 1475], ["2025-09", 1210], ["2025-10", 880], ["2025-11", 835],
+    ["2025-12", 1065], ["2026-01", 1170], ["2026-02", 1020], ["2026-03", 890], ["2026-04", 845],
+    ["2026-05", 925], ["2026-06", 1042], ["2026-07", 1318]
+  ],
+  "mustNotContain": ["JORDAN", "SAMPLE ST", "EXAMPLE ST", "01234-56789"]
+}

@@ -13,7 +13,7 @@
   "liheapIncomeLimits": {
     "description": "60% of Georgia state median income, by household size",
     "bySize": [34549, 45168, 55795, 66423, 77051, 87678, 89671, 91664],
-    "source": "https://benefitsusa.org/blog/georgia-liheap-income-limits-2026",
+    "source": "https://benefitsusa.org/en/blog/georgia-liheap-income-limits-2026",
     "lastChecked": "2026-10-17",
     "needsVerification": "Third-party source. Sizes 1 and 4 come from the source; others derived with standard SMI ratios. Confirm with Georgia DFCS before the demo."
   },
@@ -32,13 +32,13 @@
       },
       "whoQualifies": "Household income at or below 200% of the federal poverty level AND someone is 65+, receives SSI or SSDI, or has a Section 8 voucher.",
       "howToApply": "Use the online pre-qualifier at georgiapower.com, or call Georgia Power customer service.",
-      "applyUrl": "https://georgiapower.com/residential/billing-and-rate-plans/billing-options/payment-assistance/senior-citizen-discount.html",
+      "applyUrl": "https://www.georgiapower.com/residential/assistance/income-qualified-discount.html",
       "checklist": [
         "Your Georgia Power account number (top of your bill)",
         "Proof of age (driver's license or state ID), OR your SSI/SSDI award letter, OR your Section 8 voucher",
         "Proof of household income (Social Security statement, pension statement, or recent pay stubs)"
       ],
-      "source": "https://georgiapower.com/residential/billing-and-rate-plans/billing-options/payment-assistance/senior-citizen-discount.html",
+      "source": "https://www.georgiapower.com/residential/assistance/income-qualified-discount.html",
       "lastChecked": "2026-10-17"
     },
     {
@@ -80,14 +80,14 @@
       "renterNote": "Renters need written consent from their landlord.",
       "whoQualifies": "Household income at or below 300% of the federal poverty level. Renters need landlord consent.",
       "howToApply": "Apply online, then schedule a free home assessment.",
-      "applyUrl": "https://www.georgiapower.com/ease",
+      "applyUrl": "https://www.georgiapower.com/residential/assistance/ease.html",
       "checklist": [
         "Your Georgia Power account number",
         "Proof of household income",
         "If you rent: your landlord's written consent",
         "A time you can be home for the assessment"
       ],
-      "source": "https://www.georgiapower.com/ease",
+      "source": "https://www.georgiapower.com/residential/assistance/ease.html",
       "lastChecked": "2026-10-17"
     },
     {
