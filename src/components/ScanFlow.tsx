@@ -8,6 +8,9 @@ import { Explain } from "./Explain";
 import { Screener } from "./Screener";
 import { Results } from "./Results";
 
+// Set on the GitHub Pages build, which has no server to read bills.
+const STATIC_DEMO = process.env.NEXT_PUBLIC_STATIC_DEMO === "1";
+
 type Step = "upload" | "reading" | "confirm" | "explain" | "screen" | "results";
 
 const STEP_LABELS: Partial<Record<Step, string>> = {
@@ -25,6 +28,10 @@ export function ScanFlow() {
   const fileInput = useRef<HTMLInputElement>(null);
 
   async function upload(file: File) {
+    if (STATIC_DEMO) {
+      setError("Bill scanning is turned off in this online demo. Try the sample bill below to see the full flow.");
+      return;
+    }
     setError(null);
     setStep("reading");
     const body = new FormData();
