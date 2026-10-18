@@ -17,6 +17,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${geistSans.variable} font-sans antialiased min-h-dvh flex flex-col`}>
+        <a href="#main-content" className="skip-link">Skip to main content</a>
         <header className="bg-header text-white">
           <nav className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
             <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight">
@@ -32,7 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </div>
           </nav>
         </header>
-        <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-6">{children}</main>
+        <main id="main-content" className="mx-auto w-full max-w-2xl flex-1 px-4 py-6">{children}</main>
         <footer className="border-t border-line px-4 py-6 text-center text-xs text-ink-3">
           Bill Shock shows programs that may be relevant. Each program decides who qualifies. Not affiliated with
           Georgia Power.

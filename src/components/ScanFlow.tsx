@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { type Bill, SAMPLE_BILL } from "@/lib/bill";
+import { useEffect, useRef, useState } from "react";
+import { type Bill, SAMPLE_BILL, BillSchema } from "@/lib/bill";
+import { uploadProblem } from "@/lib/validation";
 import type { Screening } from "@/lib/rules";
 import { ConfirmBill } from "./ConfirmBill";
 import { Explain } from "./Explain";
@@ -22,22 +23,51 @@ export function ScanFlow() {
   const [bill, setBill] = useState<Bill | null>(null);
   const [screening, setScreening] = useState<Screening | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState("");
+  const [provider, setProvider] = useState<"openai" | "anthropic">("openai");
+  const [largeText, setLargeText] = useState(false);
+  const container = useRef<HTMLDivElement>(null);
+  const request = useRef<AbortController | null>(null);
+  useEffect(() => {
+    const heading = container.current?.querySelector<HTMLElement>("h1, h2");
+    heading?.setAttribute("tabindex", "-1");
+    heading?.focus();
+  }, [step]);
+  useEffect(() => {
+    document.documentElement.classList.toggle("large-text", largeText);
+    return () => document.documentElement.classList.remove("large-text");
+  }, [largeText]);
   const fileInput = useRef<HTMLInputElement>(null);
 
   async function upload(file: File) {
+    const problem = uploadProblem(file);
+    if (problem) { setError(problem); return; }
     setError(null);
     setStep("reading");
+    const controller = new AbortController();
+    request.current = controller;
+    const timeout = setTimeout(() => controller.abort("timeout"), 60000);
     const body = new FormData();
     body.append("bill", file);
+    if (apiKey.trim()) {
+      body.append("apiKey", apiKey.trim());
+      body.append("provider", provider);
+    }
     try {
-      const res = await fetch("/api/extract", { method: "POST", body });
+      const res = await fetch("/api/extract", { method: "POST", body, signal: controller.signal });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? "Something went wrong.");
-      setBill(json.bill);
+      const parsed = BillSchema.safeParse(json.bill);
+      if (!parsed.success) throw new Error("The reader returned incomplete information. Try a clearer photo or use the sample bill.");
+      setBill(parsed.data);
       setStep("confirm");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong.");
+      if (controller.signal.reason === "cancelled") return;
+      setError(controller.signal.aborted ? "Reading took too long. Try again with a clearer photo, or use the sample bill." : e instanceof TypeError ? "We could not connect. Check your internet connection and try again, or use the sample bill." : e instanceof Error ? e.message : "We could not read this bill. Please try again.");
       setStep("upload");
+    } finally {
+      clearTimeout(timeout);
+      if (request.current === controller) request.current = null;
     }
   }
 
@@ -56,11 +86,15 @@ export function ScanFlow() {
   const progress = (["confirm", "explain", "screen", "results"] as Step[]).indexOf(step);
 
   return (
-    <div>
+    <div ref={container}>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3">
+        <span className="text-sm text-ink-2">No account needed · You can check and correct numbers</span>
+        <button type="button" aria-pressed={largeText} onClick={() => setLargeText(!largeText)} className="rounded-lg border border-line px-3 py-2 font-semibold">{largeText ? "Standard text" : "Larger text"}</button>
+      </div>
       {progress >= 0 && (
         <ol className="mb-6 grid grid-cols-4 gap-1.5" aria-label="Progress">
           {(["confirm", "explain", "screen", "results"] as Step[]).map((s, i) => (
-            <li key={s} className="text-[11px] font-medium text-ink-3">
+            <li key={s} aria-current={i === progress ? "step" : undefined} className="text-[11px] font-medium text-ink-3">
               <div className={`mb-1 h-1.5 rounded-full ${i <= progress ? "bg-accent" : "bg-line"}`} />
               <span className={i === progress ? "text-ink" : ""}>{STEP_LABELS[s]}</span>
             </li>
@@ -83,10 +117,10 @@ export function ScanFlow() {
             <input
               ref={fileInput}
               type="file"
-              accept="image/*,application/pdf"
+              accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"
               capture="environment"
               className="hidden"
-              onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
+              onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ""; if (file) upload(file); }}
             />
             <button
               onClick={() => fileInput.current?.click()}
@@ -128,6 +162,18 @@ export function ScanFlow() {
             regulators&apos; staff have warned bills could rise after that. Meanwhile, LIHEAP reached only 17% of
             eligible US households in 2024. The help exists. Most people never claim it.
           </aside>
+          <section className="mt-8 rounded-xl border border-line bg-surface p-4" aria-labelledby="api-settings">
+            <h2 id="api-settings" className="font-semibold">API key</h2>
+            <label htmlFor="ai-provider" className="mt-3 block text-sm font-medium">Provider</label>
+            <select id="ai-provider" value={provider} onChange={(e) => { setProvider(e.target.value as "openai" | "anthropic"); setApiKey(""); }} className="mt-1 w-full rounded-lg border border-line bg-surface p-3">
+              <option value="openai">OpenAI</option>
+              <option value="anthropic">Anthropic</option>
+            </select>
+            <label htmlFor="api-key" className="mt-3 block text-sm font-medium">{provider === "openai" ? "OpenAI" : "Anthropic"} API key</label>
+            <input id="api-key" type="password" autoComplete="off" spellCheck={false} value={apiKey} onChange={(e) => setApiKey(e.target.value)} placeholder="Paste your API key" aria-describedby="api-key-note" className="mt-1 w-full rounded-lg border border-line bg-surface p-3" />
+            <p id="api-key-note" className="mt-2 text-sm text-ink-3">Used when you upload a bill. Sent through this app to your selected provider, never saved to browser storage or a file. Refreshing clears it. Leave blank to use the server configuration.</p>
+            {apiKey && <button type="button" onClick={() => setApiKey("")} className="mt-2 text-sm font-semibold text-brand underline">Clear key</button>}
+          </section>
         </section>
       )}
 
@@ -135,7 +181,8 @@ export function ScanFlow() {
         <section className="py-16 text-center" aria-live="polite">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-line border-t-brand" />
           <p className="mt-4 text-lg font-semibold">Reading your bill…</p>
-          <p className="text-sm text-ink-3">This takes about 10–20 seconds.</p>
+          <p className="text-sm text-ink-3">This usually takes 10–20 seconds. You can cancel and try another file.</p>
+          <button className="mt-5 rounded-xl border border-line px-5 py-3 font-semibold" onClick={() => { request.current?.abort("cancelled"); setStep("upload"); }}>Cancel reading</button>
         </section>
       )}
 

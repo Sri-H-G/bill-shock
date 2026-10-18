@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { billProblem } from "@/lib/validation";
 import type { Bill } from "@/lib/bill";
 
 type NumKey = "kwhUsed" | "currentCharges" | "totalDue" | "pastDue" | "previousKwh" | "previousCharges";
@@ -27,7 +28,15 @@ export function ConfirmBill({
 }) {
   const [draft, setDraft] = useState<Bill>(bill);
 
+  const [rawNumbers, setRawNumbers] = useState<Partial<Record<NumKey, string>>>({});
+  const incomplete = Object.entries(rawNumbers).some(([key, value]) => {
+    if (value === "" && (key === "previousKwh" || key === "previousCharges")) return false;
+    return value?.trim() === "" || !Number.isFinite(Number(value));
+  });
+  const problem = incomplete ? "Finish entering a valid number before continuing." : billProblem(draft);
+
   function setNum(key: NumKey, raw: string) {
+    setRawNumbers((previous) => ({ ...previous, [key]: raw }));
     const v = raw.trim() === "" ? null : Number(raw);
     if (v !== null && Number.isNaN(v)) return;
     setDraft((d) => ({ ...d, [key]: v ?? (key === "previousKwh" || key === "previousCharges" ? null : 0) }));
@@ -76,7 +85,7 @@ export function ConfirmBill({
                 {f.prefix && <span className="text-ink-3">{f.prefix}</span>}
                 <input
                   inputMode="decimal"
-                  value={draft[f.key] ?? ""}
+                  value={rawNumbers[f.key] ?? draft[f.key] ?? ""}
                   onChange={(e) => setNum(f.key, e.target.value)}
                   className="tabular w-full bg-transparent px-1 py-2 outline-none"
                 />
@@ -90,13 +99,15 @@ export function ConfirmBill({
         </p>
       </div>
 
+      {problem && <p role="alert" className="mt-4 rounded-lg bg-warn-soft p-3 text-warn">{problem}</p>}
       <div className="mt-6 flex gap-3">
         <button onClick={onBack} className="rounded-xl border border-line px-5 py-3 font-semibold">
           Start over
         </button>
         <button
-          onClick={() => onConfirm(draft)}
-          className="flex-1 rounded-xl bg-brand px-5 py-3 font-semibold text-brand-ink hover:opacity-90"
+          disabled={!!problem}
+          onClick={() => { if (!problem) onConfirm(draft); }}
+          className="disabled:opacity-50 disabled:cursor-not-allowed flex-1 rounded-xl bg-brand px-5 py-3 font-semibold text-brand-ink hover:opacity-90"
         >
           Looks right — explain my bill
         </button>

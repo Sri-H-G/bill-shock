@@ -77,3 +77,13 @@ body {
 .tabular {
   font-variant-numeric: tabular-nums;
 }
+
+/* Keyboard access, adjustable text and reduced motion. */
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 4px; }
+.large-text { font-size: 20px; }
+button, select, input:not([type="checkbox"]), a[class*="rounded"] { min-height: 44px; }
+.skip-link { position: fixed; left: 1rem; top: -6rem; z-index: 100; padding: 1rem; background: var(--surface); color: var(--ink); }
+.skip-link:focus { top: 1rem; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

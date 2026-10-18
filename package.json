@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test src/lib/*.test.ts",
+    "test": "tsx --test src/lib/rules.test.ts src/lib/validation.test.ts",
     "test:extract": "node scripts/test-extract.mjs",
     "fixtures": "node scripts/render-fixtures.mjs"
   },

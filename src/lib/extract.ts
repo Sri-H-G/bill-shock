@@ -44,13 +44,13 @@ export function activeProvider(): Provider | null {
   return null;
 }
 
-async function extractWithAnthropic(file: Upload): Promise<Bill | null> {
+async function extractWithAnthropic(file: Upload, apiKey?: string): Promise<Bill | null> {
   const source: Anthropic.Beta.BetaImageBlockParam | Anthropic.Beta.BetaRequestDocumentBlock =
     file.mediaType === "application/pdf"
       ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: file.base64 } }
       : { type: "image", source: { type: "base64", media_type: file.mediaType, data: file.base64 } };
 
-  const client = new Anthropic();
+  const client = new Anthropic(apiKey ? { apiKey } : undefined);
   try {
     const response = await client.beta.messages.parse({
       model: process.env.ANTHROPIC_MODEL || "claude-opus-5-5",
@@ -66,21 +66,21 @@ async function extractWithAnthropic(file: Upload): Promise<Bill | null> {
     if (err instanceof Anthropic.RateLimitError) throw new ExtractError("Too many requests right now. Try again in a minute.", 429);
     if (err instanceof Anthropic.AuthenticationError) throw new ExtractError("The Anthropic API key is invalid.", 502);
     if (err instanceof Anthropic.APIError) {
-      console.error("Anthropic API error", err.status, err.message);
+      console.error("Anthropic API error", err.status);
       throw new ExtractError("Bill reading failed. Please try again.", 502);
     }
     throw err;
   }
 }
 
-async function extractWithOpenAI(file: Upload): Promise<Bill | null> {
+async function extractWithOpenAI(file: Upload, apiKey?: string): Promise<Bill | null> {
   const dataUrl = `data:${file.mediaType};base64,${file.base64}`;
   const media: OpenAI.Responses.ResponseInputContent =
     file.mediaType === "application/pdf"
       ? { type: "input_file", filename: file.filename || "bill.pdf", file_data: dataUrl }
       : { type: "input_image", image_url: dataUrl, detail: "high" };
 
-  const client = new OpenAI();
+  const client = new OpenAI(apiKey ? { apiKey } : undefined);
   try {
     const response = await client.responses.parse({
       model: process.env.OPENAI_MODEL || "gpt-5.5",
@@ -92,13 +92,13 @@ async function extractWithOpenAI(file: Upload): Promise<Bill | null> {
     if (err instanceof OpenAI.RateLimitError) throw new ExtractError("Too many requests right now. Try again in a minute.", 429);
     if (err instanceof OpenAI.AuthenticationError) throw new ExtractError("The OpenAI API key is invalid.", 502);
     if (err instanceof OpenAI.APIError) {
-      console.error("OpenAI API error", err.status, err.message);
+      console.error("OpenAI API error", err.status);
       throw new ExtractError("Bill reading failed. Please try again.", 502);
     }
     throw err;
   }
 }
 
-export async function extractBill(file: Upload, provider: Provider): Promise<Bill | null> {
-  return provider === "openai" ? extractWithOpenAI(file) : extractWithAnthropic(file);
+export async function extractBill(file: Upload, provider: Provider, apiKey?: string): Promise<Bill | null> {
+  return provider === "openai" ? extractWithOpenAI(file, apiKey) : extractWithAnthropic(file, apiKey);
 }

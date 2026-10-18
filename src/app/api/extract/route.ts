@@ -1,4 +1,5 @@
-import { activeProvider, ExtractError, extractBill, IMAGE_TYPES, type UploadType } from "@/lib/extract";
+import { uploadProblem } from "@/lib/validation";
+import { activeProvider, ExtractError, extractBill, type UploadType } from "@/lib/extract";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -6,21 +7,21 @@ export const maxDuration = 60;
 const MAX_BYTES = 10 * 1024 * 1024;
 
 export async function POST(req: Request) {
-  const provider = activeProvider();
-  if (!provider) {
-    return Response.json(
-      { error: "Bill reading isn't configured on this server. Try the sample bill instead." },
-      { status: 503 },
-    );
+  let form: FormData;
+  try { form = await req.formData(); }
+  catch { return Response.json({ error: "The upload could not be read. Choose the file again." }, { status: 400 }); }
+  const keyValue = form.get("apiKey");
+  const apiKey = typeof keyValue === "string" ? keyValue.trim() : undefined;
+  const requestedProvider = form.get("provider");
+  if (apiKey && requestedProvider !== "openai" && requestedProvider !== "anthropic") {
+    return Response.json({ error: "Choose OpenAI or Anthropic for your API key." }, { status: 400 });
   }
-
-  const form = await req.formData();
   const file = form.get("bill");
-  if (!(file instanceof File)) return Response.json({ error: "No file uploaded." }, { status: 400 });
-  if (file.size > MAX_BYTES) return Response.json({ error: "File is over 10 MB." }, { status: 413 });
-  if (file.type !== "application/pdf" && !(IMAGE_TYPES as readonly string[]).includes(file.type)) {
-    return Response.json({ error: "Upload a photo (JPG, PNG, WebP) or a PDF." }, { status: 415 });
-  }
+  if (!(file instanceof File)) return Response.json({ error: "No file uploaded. Choose a photo or PDF." }, { status: 400 });
+  const problem = uploadProblem(file);
+  if (problem) return Response.json({ error: problem }, { status: file.size > MAX_BYTES ? 413 : 400 });
+  const provider = apiKey && (requestedProvider === "openai" || requestedProvider === "anthropic") ? requestedProvider : activeProvider();
+  if (!provider) return Response.json({ error: "Add an API key below to read a real bill, or try the sample bill." }, { status: 503 });
 
   try {
     // The file is sent to the model and discarded; nothing is stored.
@@ -31,6 +32,7 @@ export async function POST(req: Request) {
         filename: file.name,
       },
       provider,
+      apiKey || undefined,
     );
     if (!bill) return Response.json({ error: "We couldn't read this bill. Try a clearer photo." }, { status: 422 });
     if (!bill.isElectricBill) {
@@ -39,6 +41,6 @@ export async function POST(req: Request) {
     return Response.json({ bill, provider });
   } catch (err) {
     if (err instanceof ExtractError) return Response.json({ error: err.message }, { status: err.status });
-    throw err;
+    return Response.json({ error: "We could not finish reading this bill. Try again, choose a clearer photo, or use the sample bill." }, { status: 502 });
   }
 }
