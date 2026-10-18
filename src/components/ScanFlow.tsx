@@ -61,7 +61,7 @@ export function ScanFlow() {
         <ol className="mb-6 grid grid-cols-4 gap-1.5" aria-label="Progress">
           {(["confirm", "explain", "screen", "results"] as Step[]).map((s, i) => (
             <li key={s} className="text-[11px] font-medium text-ink-3">
-              <div className={`mb-1 h-1.5 rounded-full ${i <= progress ? "bg-brand" : "bg-line"}`} />
+              <div className={`mb-1 h-1.5 rounded-full ${i <= progress ? "bg-accent" : "bg-line"}`} />
               <span className={i === progress ? "text-ink" : ""}>{STEP_LABELS[s]}</span>
             </li>
           ))}
@@ -71,7 +71,8 @@ export function ScanFlow() {
       {step === "upload" && (
         <section>
           <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-            Is your power bill a shock? Find the help that already exists.
+            Is your power bill a shock?{" "}
+            <span className="bg-[linear-gradient(transparent_60%,var(--accent)_60%)]">Find the help that already exists.</span>
           </h1>
           <p className="mt-3 text-lg text-ink-2">
             Snap a photo of your Georgia Power bill. In about 5 minutes you&apos;ll know why it changed, which
@@ -114,7 +115,7 @@ export function ScanFlow() {
               ["3", "Get your list", "Programs, what to bring, official links"],
             ].map(([n, t, d]) => (
               <li key={n} className="rounded-xl border border-line bg-surface p-4">
-                <div className="text-sm font-bold text-brand">Step {n}</div>
+                <div className="inline-block rounded bg-accent px-1.5 text-xs font-bold text-accent-ink">Step {n}</div>
                 <div className="mt-1 font-semibold">{t}</div>
                 <div className="text-sm text-ink-2">{d}</div>
               </li>

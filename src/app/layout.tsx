@@ -11,24 +11,24 @@ export const metadata: Metadata = {
     "Snap a photo of your Georgia Power bill. See why it changed and which assistance programs you may qualify for. Free, no account.",
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#081e46" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} font-sans antialiased min-h-dvh flex flex-col`}>
-        <header className="border-b border-line bg-surface">
+        <header className="bg-header text-white">
           <nav className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
             <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight">
-              <span aria-hidden className="grid h-7 w-7 place-items-center rounded-md bg-brand text-brand-ink">
+              <span aria-hidden className="grid h-7 w-7 place-items-center rounded-md bg-accent text-accent-ink">
                 ⚡
               </span>
               Bill Shock
             </Link>
-            <div className="flex gap-4 text-sm font-medium text-ink-2">
-              <Link href="/" className="hover:text-ink">Scan a bill</Link>
-              <Link href="/premium" className="hover:text-ink">Tracker</Link>
-              <Link href="/about" className="hover:text-ink">About</Link>
+            <div className="flex gap-4 text-sm font-medium text-white/75">
+              <Link href="/" className="hover:text-accent">Scan a bill</Link>
+              <Link href="/premium" className="hover:text-accent">Tracker</Link>
+              <Link href="/about" className="hover:text-accent">About</Link>
             </div>
           </nav>
         </header>
