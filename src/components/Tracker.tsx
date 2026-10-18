@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Bill } from "@/lib/bill";
 import { forecastNext, historyFromBill, type MonthPoint, monthLabel, SAMPLE_HISTORY } from "@/lib/tracker";
+import { BusinessModel } from "./BusinessModel";
 import { SpendingChart } from "./SpendingChart";
 
 function tipsFor(history: MonthPoint[], forecastHigh: number | null) {
@@ -174,6 +175,7 @@ export function Tracker() {
             Start premium
           </button>
         )}
+        <BusinessModel />
         <p className="mt-3 text-xs text-ink-3">
           Help finding assistance programs is always free.{" "}
           <Link href="/" className="underline">
