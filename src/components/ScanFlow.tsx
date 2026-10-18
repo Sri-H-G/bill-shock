@@ -9,6 +9,9 @@ import { Explain } from "./Explain";
 import { Screener } from "./Screener";
 import { Results } from "./Results";
 
+// Set on the GitHub Pages build, which has no server to read bills.
+const STATIC_DEMO = process.env.NEXT_PUBLIC_STATIC_DEMO === "1";
+
 type Step = "upload" | "reading" | "confirm" | "explain" | "screen" | "results";
 
 const STEP_LABELS: Partial<Record<Step, string>> = {
@@ -42,6 +45,10 @@ export function ScanFlow() {
   async function upload(file: File) {
     const problem = uploadProblem(file);
     if (problem) { setError(problem); return; }
+    if (STATIC_DEMO) {
+      setError("Bill scanning is turned off in this online demo. Try the sample bill below to see the full flow.");
+      return;
+    }
     setError(null);
     setStep("reading");
     const controller = new AbortController();
@@ -162,7 +169,7 @@ export function ScanFlow() {
             regulators&apos; staff have warned bills could rise after that. Meanwhile, LIHEAP reached only 17% of
             eligible US households in 2024. The help exists. Most people never claim it.
           </aside>
-          <section className="mt-8 rounded-xl border border-line bg-surface p-4" aria-labelledby="api-settings">
+          {!STATIC_DEMO && <section className="mt-8 rounded-xl border border-line bg-surface p-4" aria-labelledby="api-settings">
             <h2 id="api-settings" className="font-semibold">API key</h2>
             <label htmlFor="ai-provider" className="mt-3 block text-sm font-medium">Provider</label>
             <select id="ai-provider" value={provider} onChange={(e) => { setProvider(e.target.value as "openai" | "anthropic"); setApiKey(""); }} className="mt-1 w-full rounded-lg border border-line bg-surface p-3">
@@ -173,7 +180,7 @@ export function ScanFlow() {
             <input id="api-key" type="password" autoComplete="off" spellCheck={false} value={apiKey} onChange={(e) => setApiKey(e.target.value)} placeholder="Paste your API key" aria-describedby="api-key-note" className="mt-1 w-full rounded-lg border border-line bg-surface p-3" />
             <p id="api-key-note" className="mt-2 text-sm text-ink-3">Used when you upload a bill. Sent through this app to your selected provider, never saved to browser storage or a file. Refreshing clears it. Leave blank to use the server configuration.</p>
             {apiKey && <button type="button" onClick={() => setApiKey("")} className="mt-2 text-sm font-semibold text-brand underline">Clear key</button>}
-          </section>
+          </section>}
         </section>
       )}
 
