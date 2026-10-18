@@ -41,7 +41,7 @@ export function Tracker() {
   const [history, setHistory] = useState<MonthPoint[]>(SAMPLE_HISTORY);
   const [fromBill, setFromBill] = useState(false);
   const [alertAt, setAlertAt] = useState(200);
-  const [plan, setPlan] = useState<"monthly" | "annual">("monthly");
+  const [plan, setPlan] = useState<"monthly" | "annual" | "institutional">("monthly");
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
@@ -144,11 +144,12 @@ export function Tracker() {
           <li>✓ We re-check assistance programs when your situation changes</li>
           <li>✓ Delete your data anytime with one tap</li>
         </ul>
-        <div className="mt-4 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Billing period">
+        <div className="mt-4 grid gap-2 sm:grid-cols-3" role="radiogroup" aria-label="Billing period">
           {(
             [
               ["monthly", "$5.99", "per month"],
               ["annual", "$49.99", "per year · save 30%"],
+              ["institutional", "$10k–$25k", "per year · nonprofits, utilities, agencies"],
             ] as const
           ).map(([id, price, sub]) => (
             <button
@@ -165,14 +166,16 @@ export function Tracker() {
         </div>
         {clicked ? (
           <p role="status" className="mt-4 rounded-xl bg-good-soft p-3 text-sm text-good">
-            Thanks! Premium isn&apos;t open yet. We counted your interest, and you weren&apos;t charged.
+            {plan === "institutional"
+              ? "Thanks! Institutional plans aren't open yet. We counted your interest, and you weren't charged."
+              : "Thanks! Premium isn't open yet. We counted your interest, and you weren't charged."}
           </p>
         ) : (
           <button
             onClick={startPremium}
             className="mt-4 w-full rounded-xl bg-brand px-5 py-3 font-semibold text-brand-ink hover:opacity-90"
           >
-            Start premium
+            {plan === "institutional" ? "Request a pilot" : "Start premium"}
           </button>
         )}
         <BusinessModel />
