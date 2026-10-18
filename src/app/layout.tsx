@@ -37,6 +37,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <footer className="border-t border-line px-4 py-6 text-center text-xs text-ink-3">
           Bill Shock shows programs that may be relevant. Each program decides who qualifies. Not affiliated with
           Georgia Power.
+          <div className="mt-2">Demo v2 · Input validation and error recovery enabled</div>
         </footer>
       </body>
     </html>
